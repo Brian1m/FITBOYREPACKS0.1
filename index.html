@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FIT BOY REPACKS</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AE%3C/text%3E%3C/svg%3E">
+<style>
+  /* -------------------------
+     Theme variables & base
+     ------------------------- */
+  :root{
+    --bg-1:#060912;
+    --bg-2:#07151f;
+    --card:#0f1720;
+    --muted:#9aa7b3;
+    --accent1:#8a4dff;
+    --accent2:#37d7ff;
+    --glass: rgba(255,255,255,0.03);
+    --danger:#ff5d6b;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:Inter, "Segoe UI", Roboto, system-ui, -apple-system, Arial;
+    color:#eaf6ff; background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    display:flex; flex-direction:column;
+  }
+  a{color:inherit; text-decoration:none}
+  button{cursor:pointer}
+
+  /* -------------------------
+     Header
+     ------------------------- */
+  header{
+    position:sticky; top:0; z-index:90;
+    display:flex; align-items:center; justify-content:space-between; padding:12px 18px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    border-bottom:1px solid rgba(255,255,255,0.02);
+    backdrop-filter: blur(6px);
+  }
+  .brand{display:flex; align-items:center; gap:12px}
+  .logo{
+    width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg,var(--accent1),var(--accent2)); box-shadow:0 8px 26px rgba(58,40,140,0.12);
+    font-weight:800; font-size:18px; color:white;
+  }
+  h1{margin:0; font-size:18px}
+  .tag{font-size:12px; color:var(--muted)}
+
+  .header-controls{display:flex; gap:10px; align-items:center}
+  .search{
+    display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:10px; min-width:240px;
+  }
+  .search input{ background:transparent; border:none; outline:none; color: #eaf6ff; width:260px;}
+  .select{ background:rgba(255,255,255,0.02); border:none; color:var(--muted); padding:8px 10px; border-radius:10px }
+  .btn{ background:linear-gradient(180deg,var(--accent1), #5b2bdb); color:white; border:none; padding:9px 12px; border-radius:10px; font-weight:700 }
+  .btn.alt{ background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted) }
+
+  /* -------------------------
+     Main layout
+     ------------------------- */
+  main{ padding:20px 22px; flex:1; overflow:auto }
+  .controls-bar{ display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap }
+  .left-controls{ display:flex; gap:10px; align-items:center }
+  .hero{
+    height:180px; border-radius:14px; margin-bottom:16px; overflow:hidden; position:relative;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400"><rect width="100%" height="100%" fill="%23061219"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%233b3b3b" font-size="46">FEATURED</text></svg>');
+    background-size:cover; background-position:center; box-shadow: 0 20px 60px rgba(2,6,12,0.6);
+    display:flex; align-items:flex-end; padding:18px;
+  }
+  .hero .hero-card{ background: linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); padding:16px; border-radius:10px; display:flex; gap:12px; align-items:center }
+  .hero-cover{ width:110px; height:110px; border-radius:8px; overflow:hidden; background:#0b1116; display:flex; align-items:center; justify-content:center }
+  .hero-cover img{ width:100%; height:100%; object-fit:cover }
+  .hero h2{ margin:0; font-size:20px }
+  .muted{ color:var(--muted); font-size:13px }
+
+  /* -------------------------
+     Grid & cards
+     ------------------------- */
+  .grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap:14px }
+  .slot{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:10px;
+         border:1px solid rgba(255,255,255,0.02); position:relative; overflow:hidden; transition: transform .18s ease, box-shadow .18s ease; }
+  .slot:hover{ transform: translateY(-6px); box-shadow: 0 20px 60px rgba(2,6,12,0.6) }
+  .badge{ position:absolute; left:10px; top:10px; background:var(--glass); color:var(--muted); padding:6px 9px; border-radius:999px; font-size:12px }
+
+  /* flip card */
+  .flip-wrap{ perspective:1000px; }
+  .flip{ width:100%; transform-style:preserve-3d; transition: transform .55s cubic-bezier(.2,.9,.3,1); position:relative; }
+  .flip-wrap:hover .flip{ transform: rotateY(180deg); }
+  .face{ backface-visibility:hidden; position:relative; border-radius:10px; overflow:hidden }
+  .front{ }
+  .back{ position:absolute; inset:0; transform: rotateY(180deg); padding:12px; display:flex; flex-direction:column; justify-content:space-between; background: linear-gradient(180deg, rgba(20,22,26,0.6), rgba(6,8,12,0.6)); }
+
+  .cover{ height:140px; border-radius:8px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#081018,#051018)}
+  .cover img{ width:100%; height:100%; object-fit:cover; transition: transform .4s ease }
+  .title{ margin-top:10px; font-weight:800; font-size:15px }
+  .desc{ color:var(--muted); font-size:13px; height:44px; overflow:hidden; margin-top:6px }
+
+  .card-row{ display:flex; align-items:center; gap:8px; margin-top:10px }
+  .size{ margin-left:auto; color:var(--muted); font-size:13px }
+
+  .actions{ display:flex; gap:8px; margin-top:12px }
+  .tiny{ padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:transparent; color:var(--muted); font-weight:700 }
+  .tiny.primary{ background: linear-gradient(180deg,var(--accent1), #5b2bdb); color:white; border:none }
+  .tiny.danger{ border-color: rgba(255,77,109,0.08); color:var(--danger) }
+
+  /* skeleton */
+  .skeleton{ background:linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.02) 75%);
+             background-size:200% 100%; animation: shimmer 1.4s infinite; border-radius:8px }
+  @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* small UI pieces */
+  .meta-small{ font-size:13px; color:var(--muted) }
+  .rating{ color:#ffd166; font-weight:800 }
+
+  /* preview and modals */
+  .modal-backdrop{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(2,6,12,0.6); z-index:120 }
+  .modal{ width:760px; max-width:94%; border-radius:12px; padding:16px; background: linear-gradient(180deg,#071018,#0b131a); box-shadow: 0 30px 120px rgba(3,8,15,0.8); color:#eaf6ff; transform:translateY(12px); opacity:0; transition: all .18s }
+  .modal.show{ transform:translateY(0); opacity:1 }
+
+  .row{ display:flex; gap:10px; align-items:center }
+  .col{ flex:1 }
+  input[type="text"], textarea{ width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:#eaf6ff; outline:none }
+  textarea{ min-height:110px; resize:vertical }
+
+  .filebox{ border:2px dashed rgba(255,255,255,0.03); padding:12px; border-radius:10px; display:flex; gap:12px; align-items:center; justify-content:space-between; color:var(--muted) }
+  .filebox.drag{ border-color: rgba(138,77,255,0.6); background: rgba(138,77,255,0.03) }
+
+  /* footer */
+  footer{ padding:16px 22px; border-top:1px solid rgba(255,255,255,0.02); display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:13px; margin-top:12px; }
+
+  /* responsive */
+  @media (max-width:860px){
+    .search input{ width:120px }
+    .hero{ height:140px }
+    .cover{ height:120px }
+    .modal{ width:92% }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">GR</div>
+    <div>
+      <h1>FITBOY REPACKS</h1>
+      <div class="tag">ZIP AND RAR COMPRESSED GAMES</div>
+    </div>
+  </div>
+
+  <div class="header-controls">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11.5" cy="11.5" r="5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+      <input id="search" placeholder="Search title, description, category..." />
+    </div>
+
+    <select id="sort" class="select">
+      <option value="newest">Newest</option>
+      <option value="sizeDesc">Largest</option>
+      <option value="sizeAsc">Smallest</option>
+      <option value="titleAsc">Title A→Z</option>
+    </select>
+
+    <button id="adminToggle" class="btn">Admin Login</button>
+    <button id="clearAll" class="btn alt">Clear All</button>
+  </div>
+</header>
+
+<main>
+  <div class="controls-bar">
+    <div class="left-controls">
+      <div class="muted">FITBOY REPACKS 2025</div>
+    </div>
+    <div style="margin-left:auto; display:flex; align-items:center; gap:10px">
+      <div class="muted">Category:</div>
+      <select id="categoryFilter" class="select"><option value="">All</option></select>
+    </div>
+  </div>
+
+  <div class="hero" id="hero">
+    <div class="hero-card">
+      <div class="hero-cover" id="heroCover"><img src="" alt="" style="display:none"/></div>
+      <div style="min-width:260px">
+        <h2 id="heroTitle">No Featured Game</h2>
+        <div class="muted" id="heroDesc">Upload games from admin to feature them here automatically.</div>
+        <div style="margin-top:8px">
+          <button id="heroDownload" class="btn primary" style="display:none">Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <div>© 2025 FITBOY REPACKS. All Rights Reserved</div>
+    <div class="muted">SUPPORTED BY JOSCO BRANDS AND DESIGNS.</div>
+  </footer>
+</main>
+
+<!-- Upload/Edit Modal -->
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" id="modal">
+    <h3 id="modalTitle">Upload to slot</h3>
+    <div class="muted" id="modalSub">Add title, description, cover and ZIP. ZIP size is detected automatically.</div>
+
+    <div style="height:12px"></div>
+    <div class="row">
+      <div class="col"><input id="mTitle" type="text" placeholder="Game Title" /></div>
+      <div style="width:140px"><input id="mCategory" type="text" placeholder="Category" /></div>
+    </div>
+
+    <div style="height:8px"></div>
+    <div class="row">
+      <div class="col"><textarea id="mDesc" placeholder="Short description (max 300 chars)"></textarea></div>
+    </div>
+
+    <div style="height:8px"></div>
+    <div class="row">
+      <div class="col">
+        <input id="mCoverUrl" type="text" placeholder="Cover image URL (optional)" />
+      </div>
+      <div style="width:160px">
+        <div class="filebox" id="coverBox">
+          <div id="coverMeta" class="muted">No cover</div>
+          <div>
+            <input id="coverFile" type="file" accept="image/*" style="display:none" />
+            <button id="coverBtn" class="tiny primary">Upload Cover</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+    <div id="zipBox" class="filebox">
+      <div>
+        <div style="font-weight:800">ZIP file</div>
+        <div id="zipMeta" class="muted">No file chosen — drag & drop supported</div>
+      </div>
+      <div>
+        <input id="mZipFile" type="file" accept=".zip" style="display:none" />
+        <button id="zipBtn" class="tiny">Choose ZIP</button>
+      </div>
+    </div>
+
+    <div style="height:8px"></div>
+    <div class="row">
+      <div class="muted">Detected size:</div>
+      <div id="detected" class="muted">0.00 MB</div>
+      <div style="margin-left:auto" id="slotIdx" class="muted"></div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:12px">
+      <button id="modalCancel" class="tiny">Cancel</button>
+      <button id="modalDelete" class="tiny danger" style="display:none">Delete Slot</button>
+      <button id="modalSave" class="tiny primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal-backdrop" id="previewBackdrop" aria-hidden="true">
+  <div class="modal" style="max-width:920px; display:flex; gap:18px; align-items:flex-start;">
+    <div style="width:320px">
+      <div style="height:220px; border-radius:8px; overflow:hidden; background:#0b1116; display:flex; align-items:center; justify-content:center">
+        <img id="pCover" src="" alt="cover" style="width:100%; height:100%; object-fit:cover" />
+      </div>
+    </div>
+
+    <div style="flex:1">
+      <h2 id="pTitle"></h2>
+      <div id="pCategory" class="muted"></div>
+      <div id="pDesc" style="margin-top:10px; color:var(--muted); line-height:1.5"></div>
+      <div style="margin-top:12px; display:flex; gap:10px; align-items:center">
+        <a id="pDownload" class="tiny primary" href="#" download>Download</a>
+        <div id="pSize" class="muted"></div>
+        <div id="pDownloads" class="muted" style="margin-left:auto"></div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; align-items:center; gap:8px">
+        <div class="muted">Rate this:</div>
+        <div id="pRating" style="display:flex; gap:6px"></div>
+        <div style="margin-left:auto"><button id="pLike" class="tiny">👍 <span id="pLikeCount">0</span></button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =============================
+   Configuration & constants
+   ============================= */
+const ADMIN_PASSWORD = 'admin123'; // CHANGE before public sharing
+const STORAGE_KEY = 'gr_pro_slots_v1';
+const TOTAL_SLOTS = 20;
+
+/* =============================
+   Utilities
+   ============================= */
+function humanMB(bytes){ return (bytes/(1024*1024)).toFixed(2); }
+function nowISO(){ return new Date().toISOString(); }
+function idGen(){ return Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4); }
+function safeFilename(n){ return (n||'game').replace(/[\/\\?%*:|"<>]/g,'-').trim() }
+
+/* =============================
+   Init storage (20 slots)
+   Each slot structure:
+   { id, filled, title, desc, category, coverUrl, coverData, fileData, sizeMB, createdAt, downloads, likes, ratings:[], tags:[] }
+   ============================= */
+function initStorage(){
+  if(!localStorage.getItem(STORAGE_KEY)){
+    const arr = Array.from({length:TOTAL_SLOTS}, () => ({
+      id: idGen(),
+      filled: false, title:'', desc:'', category:'', coverUrl:'', coverData:'', fileData:'', sizeMB:'0.00',
+      createdAt:0, downloads:0, likes:0, ratings:[], tags:[]
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+}
+function getSlots(){ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+function saveSlots(slots){ localStorage.setItem(STORAGE_KEY, JSON.stringify(slots)); }
+
+/* =============================
+   Elements
+   ============================= */
+const grid = document.getElementById('grid');
+const heroCover = document.getElementById('heroCover');
+const heroTitle = document.getElementById('heroTitle');
+const heroDesc = document.getElementById('heroDesc');
+const heroDownload = document.getElementById('heroDownload');
+
+const searchInput = document.getElementById('search');
+const sortSelect = document.getElementById('sort');
+const categoryFilter = document.getElementById('categoryFilter');
+const adminToggle = document.getElementById('adminToggle');
+const clearAllBtn = document.getElementById('clearAll');
+
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modal = document.getElementById('modal');
+const mTitle = document.getElementById('mTitle');
+const mDesc = document.getElementById('mDesc');
+const mCategory = document.getElementById('mCategory');
+const mCoverUrl = document.getElementById('mCoverUrl');
+const coverBtn = document.getElementById('coverBtn');
+const coverFile = document.getElementById('coverFile');
+const coverMeta = document.getElementById('coverMeta');
+const zipBtn = document.getElementById('zipBtn');
+const zipFile = document.getElementById('mZipFile');
+const zipMeta = document.getElementById('zipMeta');
+const detected = document.getElementById('detected');
+const modalSave = document.getElementById('modalSave');
+const modalCancel = document.getElementById('modalCancel');
+const modalDelete = document.getElementById('modalDelete');
+const slotIdx = document.getElementById('slotIdx');
+
+const previewBackdrop = document.getElementById('previewBackdrop');
+const pCover = document.getElementById('pCover');
+const pTitle = document.getElementById('pTitle');
+const pDesc = document.getElementById('pDesc');
+const pDownload = document.getElementById('pDownload');
+const pSize = document.getElementById('pSize');
+const pDownloads = document.getElementById('pDownloads');
+const pRating = document.getElementById('pRating');
+const pLike = document.getElementById('pLike');
+const pLikeCount = document.getElementById('pLikeCount');
+const pCategory = document.getElementById('pCategory');
+
+/* =============================
+   State
+   ============================= */
+let adminOn = false;
+let editingIndex = null;
+let tempCover = null; // dataURL
+let tempZip = null;   // dataURL
+let tempZipSize = '0.00';
+
+/* =============================
+   Helpers: read file to dataURL
+   ============================= */
+function readAsDataURL(file){ return new Promise((res, rej) => { const r = new FileReader(); r.onload = ()=>res(r.result); r.onerror = ()=>rej(r.error); r.readAsDataURL(file); }); }
+
+/* =============================
+   Render / UI
+   ============================= */
+function buildCategoryFilter(){
+  const slots = getSlots();
+  const set = new Set();
+  slots.forEach(s => { if(s.filled && s.category) set.add(s.category) });
+  categoryFilter.innerHTML = '<option value="">All</option>';
+  [...set].sort().forEach(c => {
+    const o = document.createElement('option'); o.value = c; o.textContent = c; categoryFilter.appendChild(o);
+  });
+}
+
+function getFeatured(){
+  const slots = getSlots().filter(s => s.filled);
+  if(!slots.length) return null;
+  // featured = newest by createdAt
+  return slots.reduce((a,b) => (b.createdAt > a.createdAt ? b : a), slots[0]);
+}
+
+function renderHero(){
+  const feat = getFeatured();
+  if(!feat){ heroCover.querySelector('img').style.display='none'; heroTitle.textContent='No Featured Game'; heroDesc.textContent='Upload games to feature them automatically.'; heroDownload.style.display='none'; return; }
+  const imgSrc = feat.coverUrl || feat.coverData || '';
+  const imgEl = heroCover.querySelector('img');
+  if(imgSrc){ imgEl.src = imgSrc; imgEl.style.display='block'; } else { imgEl.style.display='none' }
+  heroTitle.textContent = feat.title;
+  heroDesc.textContent = (feat.desc || '').slice(0,120);
+  if(feat.fileData){
+    heroDownload.style.display='inline-block';
+    heroDownload.onclick = ()=> { downloadFromData(feat.fileData, safeFilename(feat.title)+'.zip'); incrementDownloadById(feat.id); renderAll(); }
+  } else heroDownload.style.display='none';
+}
+
+/* download helper and counting */
+function downloadFromData(dataUrl, filename){
+  const a = document.createElement('a'); a.href = dataUrl; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+}
+function incrementDownloadById(slotId){
+  const slots = getSlots();
+  const s = slots.find(x => x.id === slotId);
+  if(s){ s.downloads = (s.downloads||0) + 1; saveSlots(slots); }
+}
+
+/* render grid of 20 fixed slots */
+function renderGrid(){
+  const q = (searchInput.value||'').toLowerCase();
+  const sort = sortSelect.value;
+  const cat = categoryFilter.value;
+  const slots = getSlots().slice(); // direct 20-element array
+  // apply simple filter for display, but we keep the same order of slots
+  grid.innerHTML = '';
+  slots.forEach((slot, index) => {
+    // filter hide if doesn't match search/category but we must keep position — requirement said slots stay in place
+    const matchesSearch = !q || (slot.title||'').toLowerCase().includes(q) || (slot.desc||'').toLowerCase().includes(q) || (slot.category||'').toLowerCase().includes(q);
+    const matchesCat = !cat || slot.category === cat;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'slot';
+    wrapper.innerHTML = `
+      <div class="badge">#${index+1}</div>
+      <div class="flip-wrap">
+        <div class="flip">
+          <div class="face front">
+            <div class="cover">${slot.filled && (slot.coverUrl||slot.coverData) ? `<img src="${slot.coverUrl||slot.coverData}" alt="">` : `<div class="skeleton" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted)"><div>No Cover</div></div>`}</div>
+            <div class="title">${slot.filled ? escapeHtml(slot.title) : 'Empty Slot'}</div>
+            <div class="desc">${slot.filled ? escapeHtml(slot.desc).slice(0,140) : ''}</div>
+            <div class="card-row">
+              <div class="meta-small">${slot.filled ? escapeHtml(slot.category||'') : ''}</div>
+              <div class="size">${slot.filled ? (slot.sizeMB + ' MB') : ''}</div>
+            </div>
+          </div>
+
+          <div class="face back">
+            <div>
+              <div style="font-weight:800">${slot.filled ? escapeHtml(slot.title) : 'Empty'}</div>
+              <div class="muted" style="margin-top:8px">${slot.filled ? escapeHtml(slot.desc).slice(0,260) : 'Upload a game to this slot'}</div>
+            </div>
+
+            <div style="display:flex; gap:8px; align-items:center; margin-top:12px">
+              ${slot.filled && slot.fileData ? `<a class="tiny primary" data-action="download" data-idx="${index}" href="${slot.fileData}" download="${safeFilename(slot.title)}.zip">Download</a>` : `<button class="tiny primary" data-action-open="${index}">Upload</button>`}
+              ${adminOn ? `<button class="tiny" data-action-edit="${index}">${slot.filled ? 'Edit' : 'Upload'}</button>` : ''}
+              ${adminOn && slot.filled ? `<button class="tiny danger" data-action-delete="${index}">Delete</button>` : ''}
+              <div style="margin-left:auto" class="muted">DLs: ${slot.filled ? (slot.downloads||0) : '-'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(wrapper);
+  });
+
+  // attach listeners
+  grid.querySelectorAll('[data-action-open]').forEach(el => el.addEventListener('click', (e)=> openModal(parseInt(el.getAttribute('data-action-open'),10))));
+  grid.querySelectorAll('[data-action-edit]').forEach(el => el.addEventListener('click', (e)=> openModal(parseInt(el.getAttribute('data-action-edit'),10))));
+  grid.querySelectorAll('[data-action-delete]').forEach(el => el.addEventListener('click', (e)=>{
+    const idx = parseInt(el.getAttribute('data-action-delete'),10);
+    if(!confirm('Delete this slot and all stored data?')) return;
+    const arr = getSlots(); arr[idx] = { id:idGen(), filled:false, title:'', desc:'', category:'', coverUrl:'', coverData:'', fileData:'', sizeMB:'0.00', createdAt:0, downloads:0, likes:0, ratings:[], tags:[] };
+    saveSlots(arr); buildCategoryFilter(); renderAll();
+  }));
+
+  // downloads anchors should increment counter
+  grid.querySelectorAll('a[data-action="download"]').forEach(a => {
+    a.addEventListener('click', (e)=>{
+      const idx = parseInt(a.getAttribute('data-index') || a.getAttribute('data-idx') || a.getAttribute('data-index'),10);
+      // hack: find slot by href
+      const href = a.getAttribute('href');
+      // find slot by fileData match
+      const slots = getSlots();
+      const sidx = slots.findIndex(s => s.fileData === href);
+      if(sidx !== -1){ slots[sidx].downloads = (slots[sidx].downloads||0) + 1; saveSlots(slots); setTimeout(renderAll, 200); }
+    });
+  });
+
+  // cover click -> open preview (we'll attach to flip front cover areas)
+  grid.querySelectorAll('.cover').forEach((cov, i) => {
+    cov.addEventListener('click', () => {
+      const slots = getSlots(); const s = slots[i];
+      if(!s.filled){ openModal(i); return; }
+      pCover.src = s.coverUrl || s.coverData || '';
+      pTitle.textContent = s.title;
+      pDesc.textContent = s.desc;
+      pSize.textContent = s.sizeMB + ' MB';
+      pDownloads.textContent = `Downloads: ${s.downloads||0}`;
+      pCategory.textContent = s.category || '';
+      pDownload.href = s.fileData || '#';
+      pDownload.setAttribute('download', safeFilename(s.title)+'.zip');
+      pLikeCount.textContent = s.likes || 0;
+      // rating stars
+      renderRatingUI(s, i);
+      previewBackdrop.style.display = 'flex'; previewBackdrop.querySelector('.modal').classList.add('show');
+    });
+  });
+}
+
+/* Escape HTML */
+function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+/* Render rating stars and attach handlers */
+function renderRatingUI(slot, globalIndex){
+  pRating.innerHTML = '';
+  // show average as stars
+  const avg = slot.ratings && slot.ratings.length ? (slot.ratings.reduce((a,b)=>a+b,0)/slot.ratings.length) : 0;
+  for(let i=1;i<=5;i++){
+    const star = document.createElement('button'); star.className='tiny'; star.style.padding='6px 8px';
+    star.innerHTML = (i <= Math.round(avg)) ? '★' : '☆';
+    star.addEventListener('click', () => {
+      // push rating
+      const slots = getSlots(); slots[globalIndex].ratings = slots[globalIndex].ratings || []; slots[globalIndex].ratings.push(i);
+      saveSlots(slots); renderAll(); renderRatingUI(slots[globalIndex], globalIndex);
+    });
+    pRating.appendChild(star);
+  }
+}
+
+/* =============================
+   Modal functions
+   ============================= */
+function openModal(index){
+  editingIndex = index;
+  const slots = getSlots();
+  const s = slots[index];
+  mTitle.value = s.title || '';
+  mDesc.value = s.desc || '';
+  mCategory.value = s.category || '';
+  mCoverUrl.value = s.coverUrl || '';
+  coverMeta.textContent = s.coverData ? 'Cover uploaded' : (s.coverUrl ? 'Cover URL set' : 'No cover');
+  zipMeta.textContent = s.fileData ? 'ZIP present' : 'No file chosen';
+  detected.textContent = s.sizeMB || '0.00';
+  tempCover = null; tempZip = null; tempZipSize = '0.00';
+  slotIdx.textContent = `Slot #${index+1}`;
+  modalBackdrop.style.display = 'flex'; modal.classList.add('show');
+  modalDelete.style.display = (adminOn && s.filled) ? 'inline-block' : 'none';
+}
+
+function closeModal(){
+  editingIndex = null;
+  modalBackdrop.style.display = 'none'; modal.classList.remove('show');
+}
+
+/* cover upload */
+coverBtn.addEventListener('click', () => coverFile.click());
+coverFile.addEventListener('change', async (e) => {
+  const f = e.target.files[0]; if(!f) return;
+  if(!f.type.startsWith('image/')) return alert('Please upload an image');
+  coverMeta.textContent = `${f.name} • ${humanMB(f.size)} MB`;
+  try{ tempCover = await readAsDataURL(f); } catch(e){ alert('Failed to read image'); }
+});
+
+/* zip upload and drag & drop */
+zipBtn.addEventListener('click', ()=> zipFile.click());
+zipFile.addEventListener('change', async (e)=> {
+  const f = e.target.files[0]; if(!f) return;
+  if(!f.name.toLowerCase().endsWith('.zip')){ alert('Select a .zip file'); zipFile.value=''; return; }
+  zipMeta.textContent = `${f.name} • ${humanMB(f.size)} MB`;
+  detected.textContent = humanMB(f.size);
+  tempZipSize = humanMB(f.size);
+  try{ tempZip = await readAsDataURL(f); } catch(e){ alert('Failed to read zip file'); }
+});
+/* drag & drop for zip */
+const zbox = document.getElementById('zipBox');
+['dragenter','dragover'].forEach(ev => zbox.addEventListener(ev, (e)=>{ e.preventDefault(); zbox.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => zbox.addEventListener(ev, (e)=>{ e.preventDefault(); zbox.classList.remove('drag'); }));
+zbox.addEventListener('drop', (e)=> {
+  const f = e.dataTransfer.files[0]; if(!f) return;
+  if(!f.name.toLowerCase().endsWith('.zip')) return alert('Drop a .zip file');
+  zipFile.files = e.dataTransfer.files; zipFile.dispatchEvent(new Event('change'));
+});
+
+/* modal save */
+modalSave.addEventListener('click', async ()=>{
+  if(editingIndex===null) return;
+  const title = mTitle.value.trim(); const desc = mDesc.value.trim(); const category = mCategory.value.trim();
+  const coverURL = mCoverUrl.value.trim();
+  if(!title) return alert('Title required');
+  const slots = getSlots();
+  const slot = slots[editingIndex];
+
+  if(!slot.filled && !tempZip && !slot.fileData) return alert('Please upload a ZIP for new slot');
+
+  // if tempZip present -> replace
+  if(tempZip){
+    slot.fileData = tempZip;
+    slot.sizeMB = tempZipSize;
+  }
+  // handle cover: file or url
+  if(tempCover){ slot.coverData = tempCover; slot.coverUrl = ''; }
+  else if(coverURL){ slot.coverUrl = coverURL; slot.coverData = ''; }
+
+  slot.title = title; slot.desc = desc; slot.category = category; slot.filled = true;
+  slot.createdAt = slot.createdAt || Date.now();
+  // ensure metrics exist
+  slot.downloads = slot.downloads || 0; slot.likes = slot.likes || 0; slot.ratings = slot.ratings || [];
+  try{
+    slots[editingIndex] = slot;
+    saveSlots(slots);
+  } catch(e){
+    console.error(e);
+    alert('Saving failed — likely storage quota exceeded. Clear some slots or use server storage.');
+    return;
+  }
+  buildCategoryFilter(); renderAll(); closeModal(); alert('Saved.');
+});
+
+/* modal delete */
+modalDelete.addEventListener('click', ()=>{
+  if(editingIndex===null) return;
+  if(!confirm('Delete contents of this slot?')) return;
+  const arr = getSlots(); arr[editingIndex] = { id:idGen(), filled:false, title:'', desc:'', category:'', coverUrl:'', coverData:'', fileData:'', sizeMB:'0.00', createdAt:0, downloads:0, likes:0, ratings:[], tags:[] };
+  saveSlots(arr); buildCategoryFilter(); renderAll(); closeModal(); alert('Deleted.');
+});
+modalCancel.addEventListener('click', closeModal);
+
+/* preview modal close */
+previewBackdrop.addEventListener('click', (e)=>{ if(e.target === previewBackdrop){ previewBackdrop.style.display='none'; previewBackdrop.querySelector('.modal').classList.remove('show'); } });
+
+/* like from preview */
+pLike.addEventListener('click', ()=>{
+  // increment likes for currently previewed game by matching download href
+  const href = pDownload.getAttribute('href');
+  const slots = getSlots(); const idx = slots.findIndex(s => s.fileData === href);
+  if(idx === -1) return;
+  slots[idx].likes = (slots[idx].likes||0) + 1;
+  saveSlots(slots); pLikeCount.textContent = slots[idx].likes; renderAll();
+});
+
+/* rating inside preview handled by renderRatingUI and star clicks */
+
+/* =============================
+   Admin toggle & clear all
+   ============================= */
+adminToggle.addEventListener('click', ()=>{
+  if(!adminOn){
+    const p = prompt('Enter admin password:');
+    if(!p) return;
+    if(p === ADMIN_PASSWORD){ adminOn = true; adminToggle.textContent = 'Admin: ON'; adminToggle.style.background = 'linear-gradient(180deg,#28c76f,#13a85a)'; renderAll(); alert('Admin unlocked.'); }
+    else alert('Wrong password.');
+  } else {
+    if(confirm('Logout admin?')){ adminOn = false; adminToggle.textContent = 'Admin Login'; adminToggle.style.background=''; renderAll(); }
+  }
+});
+
+clearAllBtn.addEventListener('click', ()=>{
+  if(!confirm('Clear ALL data stored in this browser? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY); initStorage(); buildCategoryFilter(); renderAll(); alert('Cleared.');
+});
+
+/* =============================
+   Search / sort / filter handlers
+   ============================= */
+searchInput.addEventListener('input', renderAll);
+sortSelect.addEventListener('change', renderAll);
+categoryFilter.addEventListener('change', renderAll);
+
+/* =============================
+   Preview download -> increment
+   ============================= */
+pDownload.addEventListener('click', () => {
+  const href = pDownload.getAttribute('href');
+  const slots = getSlots(); const idx = slots.findIndex(s=>s.fileData === href);
+  if(idx !== -1){ slots[idx].downloads=(slots[idx].downloads||0)+1; saveSlots(slots); setTimeout(renderAll,200); }
+});
+
+/* =============================
+   Render all helper
+   ============================= */
+function renderAll(){
+  buildCategoryFilter(); renderGrid(); renderHero();
+}
+
+/* =============================
+   Storage usage monitor (advisory)
+   ============================= */
+function storageMB(){
+  try{ const s = localStorage.getItem(STORAGE_KEY); if(!s) return 0; return new Blob([s]).size/(1024*1024); } catch(e){ return 0; }
+}
+setInterval(()=> {
+  const used = storageMB();
+  if(used > 150) console.warn('Storage > 150MB used:', used.toFixed(2));
+}, 25000);
+
+/* =============================
+   Startup
+   ============================= */
+initStorage(); buildCategoryFilter(); renderAll();
+
+/* Utility: escape HTML already done above */
+
+</script>
+</body>
+</html>
